@@ -1,0 +1,48 @@
+Analyzing Internal-Training-Tracker...                          
+
+  error - The function 'runApp' isn't defined - lib\main.dart:4:3 - undefined_function
+  error - Classes can only extend other classes - lib\main.dart:8:42 - extends_non_class
+  error - No associated named super constructor parameter - lib\main.dart:9:43 - super_formal_parameter_without_associated_named
+  error - Undefined class 'State' - lib\main.dart:12:3 - undefined_class
+warning - The method doesn't override an inherited method - lib\main.dart:12:37 - override_on_non_overriding_member
+  error - Classes can only extend other classes - lib\main.dart:17:13 - extends_non_class
+  error - Undefined class 'ThemeMode' - lib\main.dart:18:3 - undefined_class
+  error - Undefined name 'ThemeMode' - lib\main.dart:18:26 - undefined_identifier
+  error - The method 'setState' isn't defined for the type '_InternalTrainingTrackerAppState' - lib\main.dart:21:5 - undefined_method
+  error - Undefined name 'ThemeMode' - lib\main.dart:22:34 - undefined_identifier
+  error - Undefined name 'ThemeMode' - lib\main.dart:23:13 - undefined_identifier
+  error - Undefined name 'ThemeMode' - lib\main.dart:24:13 - undefined_identifier
+  error - Undefined class 'Widget' - lib\main.dart:29:3 - undefined_class
+warning - The method doesn't override an inherited method - lib\main.dart:29:10 - override_on_non_overriding_member
+  error - Undefined class 'BuildContext' - lib\main.dart:29:16 - undefined_class
+  error - The method 'MaterialApp' isn't defined for the type '_InternalTrainingTrackerAppState' - lib\main.dart:30:12 - undefined_method
+  error - Undefined name 'AppTheme' - lib\main.dart:33:14 - undefined_identifier
+  error - Undefined name 'AppTheme' - lib\main.dart:34:18 - undefined_identifier
+  error - The method 'Scaffold' isn't defined for the type '_InternalTrainingTrackerAppState' - lib\main.dart:36:13 - undefined_method
+  error - The method 'FloatingActionButton' isn't defined for the type '_InternalTrainingTrackerAppState' - lib\main.dart:38:31 - undefined_method
+  error - Undefined name 'AppColors' - lib\main.dart:41:28 - undefined_identifier
+  error - Undefined name 'Colors' - lib\main.dart:42:28 - undefined_identifier
+  error - The method 'Icon' isn't defined for the type '_InternalTrainingTrackerAppState' - lib\main.dart:43:18 - undefined_method
+  error - Undefined name 'ThemeMode' - lib\main.dart:44:27 - undefined_identifier
+  error - Undefined name 'Icons' - lib\main.dart:45:19 - undefined_identifier
+  error - Undefined name 'Icons' - lib\main.dart:46:19 - undefined_identifier
+  error - Target of URI doesn't exist: '../../bloc/employee_performance/employee_performance.dart' - lib\presentation\dashboard\dashboard_screen.dart:5:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: '../../widgets/animated_gradient_background.dart' - lib\presentation\dashboard\dashboard_screen.dart:6:8 - uri_does_not_exist
+  error - The method 'EmployeePerformanceBloc' isn't defined for the type 'DashboardScreen' - lib\presentation\dashboard\dashboard_screen.dart:23:11 - undefined_method
+  error - The name 'LoadEmployeePerformance' isn't a class - lib\presentation\dashboard\dashboard_screen.dart:23:48 - creation_with_non_type
+  error - The method 'AnimatedGradientBackground' isn't defined for the type '_DashboardView' - lib\presentation\dashboard\dashboard_screen.dart:35:12 - undefined_method
+  error - The name 'EmployeePerformanceBloc' isn't a type, so it can't be used as a type argument - lib\presentation\dashboard\dashboard_screen.dart:48:30 - non_type_as_type_argument
+  error - The name 'EmployeePerformanceState' isn't a type, so it can't be used as a type argument - lib\presentation\dashboard\dashboard_screen.dart:48:55 - non_type_as_type_argument
+  error - Undefined class 'EmployeePerformanceLoading' - lib\presentation\dashboard\dashboard_screen.dart:51:17 - undefined_class
+  error - Undefined class 'EmployeePerformanceSuccess' - lib\presentation\dashboard\dashboard_screen.dart:52:17 - undefined_class
+  error - Undefined class 'EmployeePerformanceEmpty' - lib\presentation\dashboard\dashboard_screen.dart:53:17 - undefined_class
+  error - Undefined class 'EmployeePerformanceError' - lib\presentation\dashboard\dashboard_screen.dart:54:17 - undefined_class
+  error - Undefined class 'EmployeePerformanceSuccess' - lib\presentation\dashboard\dashboard_screen.dart:65:9 - undefined_class
+  error - Undefined class 'EmployeePerformanceError' - lib\presentation\dashboard\dashboard_screen.dart:189:9 - undefined_class
+  error - The name 'EmployeePerformanceBloc' isn't a type, so it can't be used as a type argument - lib\presentation\dashboard\dashboard_screen.dart:202:43 - non_type_as_type_argument
+  error - The name 'RefreshEmployeePerformance' isn't a class - lib\presentation\dashboard\dashboard_screen.dart:203:21 - creation_with_non_type
+warning - Unused import: '../../../../domain/entities/entities.dart' - lib\presentation\dashboard\widgets\performance_metrics_grid.dart:4:8 - unused_import
+warning - Unused import: 'package:flutter_animate/flutter_animate.dart' - lib\presentation\dashboard\widgets\profile_header.dart:3:8 - unused_import
+warning - Unused import: '../../widgets/animated_progress_bar.dart' - lib\presentation\dashboard\widgets\profile_header.dart:9:8 - unused_import
+warning - Unused import: '../../../../domain/entities/entities.dart' - lib\presentation\dashboard\widgets\skill_assessment_section.dart:5:8 - unused_import
+

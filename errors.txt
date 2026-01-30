@@ -1,0 +1,13 @@
+Analyzing Internal-Training-Tracker...                          
+
+  error - The argument type 'CardTheme' can't be assigned to the parameter type 'CardThemeData?'.  - lib\core\theme\app_theme.dart:38:18 - argument_type_not_assignable
+   info - 'useMaterial3' is deprecated and shouldn't be used. Use a ThemeData constructor (.from, .light, or .dark) instead. These constructors all have a useMaterial3 argument, and they set appropriate default values based on its value. See the useMaterial3 API documentation for full details. This feature was deprecated after v3.13.0-0.2.pre - lib\core\theme\app_theme.dart:44:7 - deprecated_member_use
+  error - There's no constant named 'seniorDeveloper' in 'EmployeeRole' - lib\data\datasources\mock_training_datasource.dart:85:26 - undefined_enum_constant
+  error - The constructor being called isn't a const constructor - lib\data\repositories\training_repository_impl.dart:68:12 - const_with_non_const
+warning - Unused import: '../../core/error/failure.dart' - lib\domain\repositories\training_repository.dart:2:8 - unused_import
+warning - Unused import: '../../core/error/failure.dart' - lib\domain\usecases\get_employee_analytics_usecase.dart:2:8 - unused_import
+warning - Unused import: '../../core/error/failure.dart' - lib\presentation\bloc\employee_analytics_bloc.dart:4:8 - unused_import
+  error - The named parameter 'filter' isn't defined - lib\presentation\pages\employee_performance_screen.dart:126:27 - undefined_named_parameter
+   info - Unnecessary use of string interpolation - lib\presentation\pages\employee_performance_screen.dart:199:18 - unnecessary_string_interpolations
+   info - Statements in an if should be enclosed in a block - lib\presentation\pages\employee_performance_screen.dart:243:17 - curly_braces_in_flow_control_structures
+
