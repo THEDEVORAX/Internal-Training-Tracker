@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/stat_card.dart';
 import '../theme/app_theme.dart';
+import '../providers/app_provider.dart';
+import '../providers/course_provider.dart';
 
 /// [DashboardScreen] is the central hub for the user, providing a high-level
 /// overview of their learning journey, statistics, and recent updates.
@@ -13,8 +16,20 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
+  void initState() {
+    super.initState();
+    // Pre-load data for the dashboard
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = context.read<AppProvider>().userId ?? 'user_1';
+      context.read<CourseProvider>().loadUserEnrollments(userId);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final appProvider = context.watch<AppProvider>();
+    final courseProvider = context.watch<CourseProvider>();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -35,7 +50,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        // Added standard padding and safe area considerations
         padding: EdgeInsets.only(
             top: MediaQuery.of(context).padding.top + 70,
             left: 20,
@@ -45,7 +59,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // --- Welcome Header Section ---
-            _buildPremiumHeader(theme),
+            _buildPremiumHeader(theme, appProvider),
             const SizedBox(height: 32),
 
             // --- Stats Dashboard ---
@@ -58,7 +72,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 TextButton(
                   onPressed: () {},
-                  child: const Text('View Detailed Analytics'),
+                  child: const Text('View Analytics'),
                 ),
               ],
             ),
@@ -70,10 +84,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               childAspectRatio: 1.1,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              children: const [
+              children: [
                 StatCard(
                   title: 'Courses Completed',
-                  value: '12',
+                  value: '${courseProvider.completedEnrollments.length}',
                   icon: Icons.school_rounded,
                   backgroundColor: AppTheme.primaryColor,
                 ),
@@ -113,7 +127,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   /// Builds a premium, gradient-styled header for the dashboard.
-  Widget _buildPremiumHeader(ThemeData theme) {
+  Widget _buildPremiumHeader(ThemeData theme, AppProvider app) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -136,7 +150,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Keep Learning, Alex!',
+            'Keep Learning, ${app.userId ?? 'Alex'}!',
             style: theme.textTheme.headlineSmall?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -144,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'You have 3 courses in progress. Complete them to earn your next badge.',
+            'You have ${context.watch<CourseProvider>().activeEnrollments.length} courses in progress. Complete them to earn your next badge.',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: Colors.white.withValues(alpha: 0.8),
             ),

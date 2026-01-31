@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-/// Skeleton loader widget for shimmer effect
+/// Skeleton loader widget for shimmer effect.
 class SkeletonLoader extends StatefulWidget {
   final double width;
   final double height;
   final BorderRadius? borderRadius;
 
   const SkeletonLoader({
-    Key? key,
     required this.width,
     required this.height,
     this.borderRadius,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<SkeletonLoader> createState() => _SkeletonLoaderState();
@@ -44,7 +44,10 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
         width: widget.width,
         height: widget.height,
         decoration: BoxDecoration(
-          color: Colors.grey[300],
+          color: Theme.of(context)
+              .colorScheme
+              .surfaceContainerHighest
+              .withValues(alpha: 0.5),
           borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
         ),
       ),
@@ -52,12 +55,12 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   }
 }
 
-/// Loading state widget
+/// [LoadingState] displays a centralized progress indicator with an optional message.
 class LoadingState extends StatelessWidget {
   final String? message;
   final double? height;
 
-  const LoadingState({Key? key, this.message, this.height}) : super(key: key);
+  const LoadingState({this.message, this.height, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,15 +70,10 @@ class LoadingState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
+            const SizedBox(
               width: 50,
               height: 50,
-              child: CircularProgressIndicator(
-                strokeWidth: 4,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
-                ),
-              ),
+              child: CircularProgressIndicator(strokeWidth: 3),
             ),
             if (message != null) ...[
               const SizedBox(height: 16),
@@ -92,13 +90,12 @@ class LoadingState extends StatelessWidget {
   }
 }
 
-/// Error state widget
+/// [ErrorState] captures and displays failure scenarios with a retry option.
 class ErrorState extends StatelessWidget {
   final String error;
   final VoidCallback? onRetry;
 
-  const ErrorState({Key? key, required this.error, this.onRetry})
-    : super(key: key);
+  const ErrorState({required this.error, this.onRetry, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -108,26 +105,34 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 60, color: Colors.red[400]),
+            Icon(Icons.error_outline_rounded,
+                size: 60, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 16),
             Text(
-              'Oops! Something went wrong',
-              style: Theme.of(context).textTheme.titleMedium,
+              'Something went wrong',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               error,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.color
+                        ?.withValues(alpha: 0.6),
+                  ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 24),
-              ElevatedButton.icon(
+              FilledButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(Icons.refresh_rounded),
                 label: const Text('Retry'),
               ),
             ],
@@ -138,7 +143,7 @@ class ErrorState extends StatelessWidget {
   }
 }
 
-/// Empty state widget
+/// [EmptyState] highlights zero-data scenarios with clear visuals and actions.
 class EmptyState extends StatelessWidget {
   final String title;
   final String? message;
@@ -147,13 +152,13 @@ class EmptyState extends StatelessWidget {
   final String? actionLabel;
 
   const EmptyState({
-    Key? key,
     required this.title,
     this.message,
     this.icon,
     this.onAction,
     this.actionLabel,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -163,20 +168,30 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null) Icon(icon, size: 80, color: Colors.grey[400]),
+            if (icon != null)
+              Icon(icon,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primaryContainer),
             if (icon != null) const SizedBox(height: 16),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             if (message != null) ...[
               const SizedBox(height: 8),
               Text(
                 message!,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.color
+                          ?.withValues(alpha: 0.6),
+                    ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -195,53 +210,51 @@ class EmptyState extends StatelessWidget {
 class SkeletonCardLoader extends StatelessWidget {
   final int itemCount;
 
-  const SkeletonCardLoader({Key? key, this.itemCount = 3}) : super(key: key);
+  const SkeletonCardLoader({this.itemCount = 3, super.key});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: itemCount,
-      itemBuilder: (context, index) {
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SkeletonLoader(
-                  width: double.infinity,
-                  height: 16,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                const SizedBox(height: 12),
-                SkeletonLoader(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  height: 16,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    SkeletonLoader(
-                      width: 60,
-                      height: 12,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    const SizedBox(width: 12),
-                    SkeletonLoader(
-                      width: 60,
-                      height: 12,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+      itemBuilder: (context, index) => Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SkeletonLoader(
+                width: double.infinity,
+                height: 16,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              const SizedBox(height: 12),
+              SkeletonLoader(
+                width: MediaQuery.of(context).size.width * 0.6,
+                height: 16,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  SkeletonLoader(
+                    width: 60,
+                    height: 12,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  const SizedBox(width: 12),
+                  SkeletonLoader(
+                    width: 60,
+                    height: 12,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ],
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/course_card.dart';
+import '../providers/course_provider.dart';
 import '../theme/app_theme.dart';
 
 /// [CoursesScreen] provides the course catalog where users can explore
@@ -21,73 +23,48 @@ class _CoursesScreenState extends State<CoursesScreen> {
   ];
   int _selectedCategoryIndex = 0;
 
-  final List<Map<String, dynamic>> _mockCourses = [
-    {
-      'title': 'Flutter App Development Fundamentals',
-      'instructor': 'Sarah Johnson',
-      'rating': 4.8,
-      'enrollments': 2540,
-    },
-    {
-      'title': 'Advanced Data Science with Python',
-      'instructor': 'Dr. Ahmed Hassan',
-      'rating': 4.6,
-      'enrollments': 1850,
-    },
-    {
-      'title': 'Cloud Computing Essentials',
-      'instructor': 'Michael Chen',
-      'rating': 4.7,
-      'enrollments': 3200,
-    },
-    {
-      'title': 'Product Management Masterclass',
-      'instructor': 'Emma Williams',
-      'rating': 4.9,
-      'enrollments': 1200,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Load courses when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CourseProvider>().loadCourses();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final courseProvider = context.watch<CourseProvider>();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Explore Courses'),
         actions: [
           IconButton(
-              onPressed: () {}, icon: const Icon(Icons.filter_list_rounded)),
+            onPressed: () {},
+            icon: const Icon(Icons.filter_list_rounded),
+          ),
         ],
       ),
       body: Column(
         children: [
-          // Search Bar Section
+          // --- Search Bar Section ---
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: TextField(
+              onChanged: (value) => courseProvider.searchCourses(value),
               decoration: InputDecoration(
                 hintText: 'Search for courses, tools...',
                 prefixIcon: const Icon(Icons.search_rounded,
                     color: AppTheme.primaryColor),
                 filled: true,
-                fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide:
-                      BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide:
-                      BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
-                ),
               ),
             ),
           ),
 
-          // Category Selector
+          // --- Category Selector ---
           SizedBox(
             height: 60,
             child: ListView.builder(
@@ -101,24 +78,24 @@ class _CoursesScreenState extends State<CoursesScreen> {
                   child: FilterChip(
                     label: Text(_categories[index]),
                     selected: isSelected,
-                    onSelected: (val) =>
-                        setState(() => _selectedCategoryIndex = index),
-                    backgroundColor: Colors.white,
-                    selectedColor: AppTheme.primaryColor.withValues(alpha: 0.1),
-                    checkmarkColor: AppTheme.primaryColor,
+                    onSelected: (val) {
+                      setState(() => _selectedCategoryIndex = index);
+                      if (_categories[index] == 'All') {
+                        courseProvider.loadCourses();
+                      } else {
+                        courseProvider.filterByCategory(_categories[index]);
+                      }
+                    },
+                    selectedColor:
+                        theme.colorScheme.primary.withValues(alpha: 0.1),
+                    checkmarkColor: theme.colorScheme.primary,
                     labelStyle: TextStyle(
-                      color:
-                          isSelected ? AppTheme.primaryColor : Colors.grey[700],
+                      color: isSelected
+                          ? theme.colorScheme.primary
+                          : theme.textTheme.bodyMedium?.color
+                              ?.withValues(alpha: 0.6),
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                        color: isSelected
-                            ? AppTheme.primaryColor
-                            : Colors.grey.withValues(alpha: 0.1),
-                      ),
                     ),
                   ),
                 );
@@ -126,25 +103,35 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
           ),
 
-          // Course Grid
+          // --- Course Grid ---
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(20),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.65,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: _mockCourses.length,
-              itemBuilder: (context, index) {
-                final course = _mockCourses[index];
-                return CourseCard(
-                  courseTitle: course['title'],
-                  instructor: course['instructor'],
-                  rating: course['rating'],
-                  enrollmentCount: course['enrollments'],
-                  onTap: () {},
+            child: courseProvider.courseResult.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (message) => Center(child: Text('Error: $message')),
+              success: (_) {
+                final courses = courseProvider.filteredCourses;
+                if (courses.isEmpty) {
+                  return const Center(
+                      child: Text('No courses found matching your criteria.'));
+                }
+
+                return GridView.builder(
+                  padding: const EdgeInsets.all(20),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.65,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: courses.length,
+                  itemBuilder: (context, index) {
+                    return CourseCard(
+                      course: courses[index],
+                      onTap: () {
+                        // Navigation to detail page can be added here
+                      },
+                    );
+                  },
                 );
               },
             ),

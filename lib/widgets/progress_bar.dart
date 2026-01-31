@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 
+/// [ProgressBar] is a reusable widget for displaying progress with optional labels.
 class ProgressBar extends StatelessWidget {
-  final double progress; // 0.0 to 1.0
+  /// Progress value between 0.0 and 1.0.
+  final double progress;
+
   final String? label;
   final Color? backgroundColor;
   final Color? foregroundColor;
   final double height;
 
+  /// Standard constructor using [super.key].
   const ProgressBar({
-    Key? key,
     required this.progress,
     this.label,
     this.backgroundColor,
     this.foregroundColor,
     this.height = 8,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final bg = backgroundColor ?? Colors.grey[300]!;
-    final fg = foregroundColor ?? Colors.blue;
+    final theme = Theme.of(context);
+    final bg = backgroundColor ?? theme.colorScheme.surfaceContainerHighest;
+    final fg = foregroundColor ?? theme.colorScheme.primary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,23 +37,22 @@ class ProgressBar extends StatelessWidget {
               children: [
                 Text(
                   label!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   '${(progress * 100).toStringAsFixed(0)}%',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: fg,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
         ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(10),
           child: LinearProgressIndicator(
             minHeight: height,
             value: progress.clamp(0.0, 1.0),

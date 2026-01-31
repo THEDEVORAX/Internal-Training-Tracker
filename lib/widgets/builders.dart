@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Builder widget for handling Result states with loading, error, and success
+/// Builder widget for handling Result states with loading, error, and success.
 class ResultBuilder<T> extends StatelessWidget {
   final dynamic result;
   final Widget Function(T data) onSuccess;
@@ -8,24 +8,24 @@ class ResultBuilder<T> extends StatelessWidget {
   final Widget Function() onLoading;
 
   const ResultBuilder({
-    Key? key,
     required this.result,
     required this.onSuccess,
     required this.onError,
     required this.onLoading,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return result.when(
-      success: (data) => onSuccess(data),
-      error: (error) => onError(error),
+      success: (data) => onSuccess(data as T),
+      error: (error) => onError(error as String),
       loading: () => onLoading(),
     );
   }
 }
 
-/// Async snapshot builder with better error handling
+/// Async snapshot builder with better error and loading handling.
 class AsyncSnapshotBuilder<T> extends StatelessWidget {
   final Future<T> future;
   final Widget Function(T data) onSuccess;
@@ -33,12 +33,12 @@ class AsyncSnapshotBuilder<T> extends StatelessWidget {
   final Widget Function() onLoading;
 
   const AsyncSnapshotBuilder({
-    Key? key,
     required this.future,
     required this.onSuccess,
     required this.onError,
     required this.onLoading,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

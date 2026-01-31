@@ -26,7 +26,6 @@ class StatCard extends StatelessWidget {
     final primaryColor = backgroundColor ?? theme.primaryColor;
 
     return Card(
-      // The card styling is now centralized in AppTheme.cardTheme
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

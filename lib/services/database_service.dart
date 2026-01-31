@@ -2,6 +2,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/index.dart';
 
+/// [DatabaseService] manages the local SQLite storage for offline capabilities.
+/// It uses a singleton pattern and ensures safe database initialization.
 class DatabaseService {
   static const String dbName = 'nexus_tracker.db';
   static const int dbVersion = 1;
@@ -14,11 +16,13 @@ class DatabaseService {
 
   DatabaseService._internal();
 
-  late Database _database;
+  Database? _db;
 
+  /// Get the database instance, initializing it if necessary.
   Future<Database> get database async {
-    _database = await _initDatabase();
-    return _database;
+    if (_db != null) return _db!;
+    _db = await _initDatabase();
+    return _db!;
   }
 
   Future<Database> _initDatabase() async {
@@ -34,7 +38,7 @@ class DatabaseService {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    // Users table
+    // --- Table: Users ---
     await db.execute('''
       CREATE TABLE users (
         id TEXT PRIMARY KEY,
@@ -49,7 +53,7 @@ class DatabaseService {
       )
     ''');
 
-    // Courses table
+    // --- Table: Courses ---
     await db.execute('''
       CREATE TABLE courses (
         id TEXT PRIMARY KEY,
@@ -64,7 +68,7 @@ class DatabaseService {
       )
     ''');
 
-    // Enrollments table
+    // --- Table: Enrollments ---
     await db.execute('''
       CREATE TABLE enrollments (
         id TEXT PRIMARY KEY,
@@ -80,7 +84,7 @@ class DatabaseService {
       )
     ''');
 
-    // Certificates table
+    // --- Table: Certificates ---
     await db.execute('''
       CREATE TABLE certificates (
         id TEXT PRIMARY KEY,
@@ -97,7 +101,7 @@ class DatabaseService {
       )
     ''');
 
-    // Test results table
+    // --- Table: Test Results ---
     await db.execute('''
       CREATE TABLE test_results (
         id TEXT PRIMARY KEY,
@@ -115,26 +119,33 @@ class DatabaseService {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Handle database upgrades
+    // Logic for database migrations can be added here
   }
 
-  // User operations
+  // --- CRUD Operations: Users ---
+
   Future<void> insertUser(User user) async {
-    await _database.insert('users', {
-      'id': user.id,
-      'firstName': user.firstName,
-      'lastName': user.lastName,
-      'email': user.email,
-      'department': user.department,
-      'jobTitle': user.jobTitle,
-      'joinDate': user.joinDate.toIso8601String(),
-      'phone': user.phone,
-      'overallScore': user.overallScore,
-    });
+    final db = await database;
+    await db.insert(
+      'users',
+      {
+        'id': user.id,
+        'firstName': user.firstName,
+        'lastName': user.lastName,
+        'email': user.email,
+        'department': user.department,
+        'jobTitle': user.jobTitle,
+        'joinDate': user.joinDate.toIso8601String(),
+        'phone': user.phone,
+        'overallScore': user.overallScore,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<User?> getUser(String userId) async {
-    final result = await _database.query(
+    final db = await database;
+    final result = await db.query(
       'users',
       where: 'id = ?',
       whereArgs: [userId],
@@ -150,75 +161,95 @@ class DatabaseService {
         jobTitle: result[0]['jobTitle'] as String,
         joinDate: DateTime.parse(result[0]['joinDate'] as String),
         phone: result[0]['phone'] as String?,
-        overallScore: result[0]['overallScore'] as double? ?? 0.0,
+        overallScore: (result[0]['overallScore'] as num?)?.toDouble() ?? 0.0,
       );
     }
     return null;
   }
 
-  // Course operations
+  // --- CRUD Operations: Courses ---
+
   Future<void> insertCourse(Course course) async {
-    await _database.insert('courses', {
-      'id': course.id,
-      'title': course.title,
-      'description': course.description,
-      'instructor': course.instructor,
-      'category': course.category,
-      'durationMinutes': course.durationMinutes,
-      'rating': course.rating,
-      'enrollmentCount': course.enrollmentCount,
-      'createdDate': course.createdDate.toIso8601String(),
-    });
+    final db = await database;
+    await db.insert(
+      'courses',
+      {
+        'id': course.id,
+        'title': course.title,
+        'description': course.description,
+        'instructor': course.instructor,
+        'category': course.category,
+        'durationMinutes': course.durationMinutes,
+        'rating': course.rating,
+        'enrollmentCount': course.enrollmentCount,
+        'createdDate': course.createdDate.toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<List<Course>> getAllCourses() async {
-    final result = await _database.query('courses');
+    final db = await database;
+    final result = await db.query('courses');
     return result.map((row) {
       return Course(
         id: row['id'] as String,
         title: row['title'] as String,
-        description: row['description'] as String,
+        description: (row['description'] as String?) ?? '',
         instructor: row['instructor'] as String,
-        category: row['category'] as String,
-        durationMinutes: row['durationMinutes'] as int,
-        rating: row['rating'] as double? ?? 0.0,
-        enrollmentCount: row['enrollmentCount'] as int? ?? 0,
+        category: (row['category'] as String?) ?? 'General',
+        durationMinutes: (row['durationMinutes'] as int?) ?? 0,
+        rating: (row['rating'] as num?)?.toDouble() ?? 0.0,
+        enrollmentCount: (row['enrollmentCount'] as int?) ?? 0,
         createdDate: DateTime.parse(row['createdDate'] as String),
       );
     }).toList();
   }
 
-  // Enrollment operations
+  // --- CRUD Operations: Enrollments ---
+
   Future<void> insertEnrollment(Enrollment enrollment) async {
-    await _database.insert('enrollments', {
-      'id': enrollment.id,
-      'userId': enrollment.userId,
-      'courseId': enrollment.courseId,
-      'enrollDate': enrollment.enrollDate.toIso8601String(),
-      'completionDate': enrollment.completionDate?.toIso8601String(),
-      'progressPercentage': enrollment.progressPercentage,
-      'status': enrollment.status,
-      'score': enrollment.score,
-    });
+    final db = await database;
+    await db.insert(
+      'enrollments',
+      {
+        'id': enrollment.id,
+        'userId': enrollment.userId,
+        'courseId': enrollment.courseId,
+        'enrollDate': enrollment.enrollDate.toIso8601String(),
+        'completionDate': enrollment.completionDate?.toIso8601String(),
+        'progressPercentage': enrollment.progressPercentage,
+        'status': enrollment.status,
+        'score': enrollment.score,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
-  // Certificate operations
+  // --- CRUD Operations: Certificates ---
+
   Future<void> insertCertificate(Certificate certificate) async {
-    await _database.insert('certificates', {
-      'id': certificate.id,
-      'userId': certificate.userId,
-      'courseId': certificate.courseId,
-      'title': certificate.title,
-      'certificateNumber': certificate.certificateNumber,
-      'issuedDate': certificate.issuedDate.toIso8601String(),
-      'expiryDate': certificate.expiryDate?.toIso8601String(),
-      'issuer': certificate.issuer,
-      'isVerified': certificate.isVerified ? 1 : 0,
-    });
+    final db = await database;
+    await db.insert(
+      'certificates',
+      {
+        'id': certificate.id,
+        'userId': certificate.userId,
+        'courseId': certificate.courseId,
+        'title': certificate.title,
+        'certificateNumber': certificate.certificateNumber,
+        'issuedDate': certificate.issuedDate.toIso8601String(),
+        'expiryDate': certificate.expiryDate?.toIso8601String(),
+        'issuer': certificate.issuer,
+        'isVerified': certificate.isVerified ? 1 : 0,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<List<Certificate>> getUserCertificates(String userId) async {
-    final result = await _database.query(
+    final db = await database;
+    final result = await db.query(
       'certificates',
       where: 'userId = ?',
       whereArgs: [userId],
@@ -241,7 +272,11 @@ class DatabaseService {
     }).toList();
   }
 
+  /// Explicitly close the database connection.
   Future<void> close() async {
-    await _database.close();
+    if (_db != null) {
+      await _db!.close();
+      _db = null;
+    }
   }
 }

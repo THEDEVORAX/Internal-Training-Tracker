@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
+import '../models/course.dart';
 
 /// [CourseCard] represents a single course item in a grid or list.
-/// Designed with a high-fidelity aesthetic, it includes a thumbnail placeholder,
-/// course details, ratings, and enrollment stats.
+/// Designed with a high-fidelity aesthetic, it utilizes the [Course] model
+/// to display comprehensive details.
 class CourseCard extends StatelessWidget {
-  final String courseTitle;
-  final String instructor;
-  final double rating;
-  final int enrollmentCount;
-  final String? thumbnail;
+  /// The course model containing all data for this card.
+  final Course course;
+
+  /// Callback when the card is tapped.
   final VoidCallback onTap;
 
-  /// Standard constructor with the new super.key syntax.
+  /// Standard constructor for the course card.
   const CourseCard({
-    super.key,
-    required this.courseTitle,
-    required this.instructor,
-    required this.rating,
-    required this.enrollmentCount,
-    this.thumbnail,
+    required this.course,
     required this.onTap,
+    super.key,
   });
 
   @override
@@ -35,7 +31,7 @@ class CourseCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Thumbnail Area - Uses a soft colored background if no image exists
+            // --- Thumbnail Area ---
             Expanded(
               flex: 5,
               child: Container(
@@ -50,8 +46,8 @@ class CourseCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                child: thumbnail != null
-                    ? Image.network(thumbnail!, fit: BoxFit.cover)
+                child: course.thumbnail != null
+                    ? Image.network(course.thumbnail!, fit: BoxFit.cover)
                     : Center(
                         child: Icon(
                           Icons.school_rounded,
@@ -63,7 +59,7 @@ class CourseCard extends StatelessWidget {
               ),
             ),
 
-            // Content Area
+            // --- Content Area ---
             Expanded(
               flex: 6,
               child: Padding(
@@ -77,7 +73,7 @@ class CourseCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          courseTitle,
+                          course.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleMedium?.copyWith(
@@ -98,7 +94,7 @@ class CourseCard extends StatelessWidget {
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                instructor,
+                                course.instructor,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.textTheme.bodySmall?.color
                                       ?.withValues(alpha: 0.6),
@@ -111,7 +107,7 @@ class CourseCard extends StatelessWidget {
                       ],
                     ),
 
-                    // Rating & Enrollment Row
+                    // Metadata Badges (Rating & Enrollment)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -122,7 +118,7 @@ class CourseCard extends StatelessWidget {
                                 size: 16, color: Colors.amber),
                             const SizedBox(width: 4),
                             Text(
-                              rating.toStringAsFixed(1),
+                              course.rating.toStringAsFixed(1),
                               style: theme.textTheme.labelMedium?.copyWith(
                                 fontWeight: FontWeight.w800,
                               ),
@@ -130,7 +126,7 @@ class CourseCard extends StatelessWidget {
                           ],
                         ),
 
-                        // Enrollment Count
+                        // Enrollment Label
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
@@ -140,7 +136,7 @@ class CourseCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            '$enrollmentCount Enrolled',
+                            '${course.enrollmentCount} Enrolled',
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,

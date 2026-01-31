@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/stat_card.dart';
 import '../theme/app_theme.dart';
+import '../providers/assessment_provider.dart';
+import '../providers/app_provider.dart';
 
 /// [AnalyticsScreen] visualizes user performance data through charts and metrics.
 /// It helps users understand their skill progression and career trends.
@@ -13,8 +16,18 @@ class AnalyticsScreen extends StatefulWidget {
 
 class _AnalyticsScreenState extends State<AnalyticsScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = context.read<AppProvider>().userId ?? 'user_1';
+      context.read<AssessmentProvider>().loadUserTestResults(userId);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final assessmentProv = context.watch<AssessmentProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -41,23 +54,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               childAspectRatio: 1.2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              children: const [
+              children: [
                 StatCard(
                   title: 'Success Rate',
-                  value: '85%',
+                  value: '${assessmentProv.passRate.toStringAsFixed(0)}%',
                   icon: Icons.track_changes_rounded,
                   backgroundColor: Colors.teal,
                 ),
                 StatCard(
-                  title: 'Engagemnt',
-                  value: '4.2/5',
+                  title: 'Average Score',
+                  value: '${assessmentProv.averageScore.toStringAsFixed(1)}%',
                   icon: Icons.auto_awesome_rounded,
                   backgroundColor: Colors.indigo,
                 ),
                 StatCard(
-                  title: 'Course Time',
-                  value: '156h',
-                  icon: Icons.timer_rounded,
+                  title: 'Tests Taken',
+                  value:
+                      '${assessmentProv.passedResults.length + assessmentProv.failedResults.length}',
+                  icon: Icons.assignment_turned_in_rounded,
                   backgroundColor: Colors.amber,
                 ),
                 StatCard(
@@ -100,7 +114,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
             // --- AI Insights Summary ---
             Text(
-              'AI recommendations',
+              'AI Recommendations',
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
