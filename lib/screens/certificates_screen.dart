@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// [CertificatesScreen] displays the user's earned credentials and badges.
+/// It uses a mix of lists for certificates and grids for visual badges.
 class CertificatesScreen extends StatefulWidget {
-  const CertificatesScreen({Key? key}) : super(key: key);
+  const CertificatesScreen({super.key});
 
   @override
   State<CertificatesScreen> createState() => _CertificatesScreenState();
@@ -10,164 +12,144 @@ class CertificatesScreen extends StatefulWidget {
 class _CertificatesScreenState extends State<CertificatesScreen> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Certificates & Credentials'),
-        elevation: 0,
+        title: const Text('My Credentials'),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.verified_rounded, color: Colors.blue)),
+        ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // --- Section: Digital Certificates ---
             Text(
               'Digital Certificates',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: theme.textTheme.titleLarge,
             ),
-            const SizedBox(height: 12),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return _buildCertificateCard(context, index);
-              },
-            ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+            _buildCertificateList(),
+            const SizedBox(height: 32),
+
+            // --- Section: Achievement Badges ---
             Text(
-              'Digital Badges',
-              style: Theme.of(context).textTheme.titleLarge,
+              'Achievement Badges',
+              style: theme.textTheme.titleLarge,
             ),
-            const SizedBox(height: 12),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
-              childAspectRatio: 0.9,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              children: [
-                _buildBadge('🌟', 'Top Performer'),
-                _buildBadge('🚀', 'Fast Learner'),
-                _buildBadge('🏆', 'Master'),
-              ],
-            ),
+            const SizedBox(height: 16),
+            _buildBadgeGrid(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCertificateCard(BuildContext context, int index) {
-    final certificates = [
+  /// Builds the list of certificates using premium list tiles.
+  Widget _buildCertificateList() {
+    final certs = [
       {
-        'title': 'Flutter Development Professional',
-        'issuer': 'Nexus Academy',
-        'date': 'Jan 15, 2025',
-        'status': 'Active',
+        'title': 'Expert Flutter Developer',
+        'issuer': 'Nexus Core',
+        'date': 'Jan 2025',
+        'active': true
       },
       {
-        'title': 'Data Science Specialist',
-        'issuer': 'Tech Institute',
-        'date': 'Dec 20, 2024',
-        'status': 'Active',
+        'title': 'Advanced UI Architecture',
+        'issuer': 'Design Lab',
+        'date': 'Dec 2024',
+        'active': true
       },
       {
-        'title': 'Cloud Computing Architect',
-        'issuer': 'Cloud Masters',
-        'date': 'Nov 10, 2024',
-        'status': 'Expired',
-      },
-      {
-        'title': 'Leadership Excellence',
-        'issuer': 'Management Academy',
-        'date': 'Oct 05, 2024',
-        'status': 'Active',
+        'title': 'Legacy Systems Migration',
+        'issuer': 'IT Academy',
+        'date': 'Oct 2024',
+        'active': false
       },
     ];
 
-    final cert = certificates[index];
-    final isExpired = cert['status'] == 'Expired';
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: certs.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final cert = certs[index];
+        final isActive = cert['active'] as bool;
 
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-            color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color:
-                (isExpired ? Colors.grey : Colors.blue).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            Icons.workspace_premium_rounded,
-            color: isExpired ? Colors.grey : Colors.blue,
-          ),
-        ),
-        title: Text(
-          cert['title'] as String,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Text(
-              '${cert['issuer']} • ${cert['date']}',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+        return Card(
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(16),
+            leading: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: (isActive ? Colors.blue : Colors.grey)
+                    .withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                isActive
+                    ? Icons.workspace_premium_rounded
+                    : Icons.history_rounded,
+                color: isActive ? Colors.blue : Colors.grey,
+              ),
             ),
-          ],
-        ),
-        trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color:
-                (isExpired ? Colors.red : Colors.green).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(20),
+            title: Text(cert['title'] as String,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text('${cert['issuer']} • ${cert['date']}',
+                style: const TextStyle(fontSize: 12)),
+            trailing: Icon(Icons.arrow_forward_ios_rounded,
+                size: 14, color: Colors.grey[400]),
           ),
-          child: Text(
-            cert['status'] as String,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: isExpired ? Colors.red : Colors.green,
-            ),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildBadge(String emoji, String label) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-            color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+  /// Builds a grid of badges.
+  Widget _buildBadgeGrid() {
+    final badges = [
+      {'emoji': '🎯', 'label': 'On Target'},
+      {'emoji': '⚡', 'label': 'Fast Learner'},
+      {'emoji': '🔥', 'label': '7 Day Streak'},
+      {'emoji': '🧠', 'label': 'Quiz Master'},
+      {'emoji': '🙌', 'label': 'Team Helper'},
+      {'emoji': '💎', 'label': 'Top 1%'},
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.85,
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 32)),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-            ),
+      itemCount: badges.length,
+      itemBuilder: (context, index) {
+        return Card(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(badges[index]['emoji']!,
+                  style: const TextStyle(fontSize: 32)),
+              const SizedBox(height: 8),
+              Text(
+                badges[index]['label']!,
+                textAlign: TextAlign.center,
+                style:
+                    const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

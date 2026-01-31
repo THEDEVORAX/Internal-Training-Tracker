@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../widgets/stat_card.dart';
+import '../theme/app_theme.dart';
 
+/// [AnalyticsScreen] visualizes user performance data through charts and metrics.
+/// It helps users understand their skill progression and career trends.
 class AnalyticsScreen extends StatefulWidget {
-  const AnalyticsScreen({Key? key}) : super(key: key);
+  const AnalyticsScreen({super.key});
 
   @override
   State<AnalyticsScreen> createState() => _AnalyticsScreenState();
@@ -11,16 +14,24 @@ class AnalyticsScreen extends StatefulWidget {
 class _AnalyticsScreenState extends State<AnalyticsScreen> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Analytics & Reporting'), elevation: 0),
+      appBar: AppBar(
+        title: const Text('Learning Insights'),
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.share_rounded)),
+        ],
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // --- Core KPI Section ---
             Text(
-              'Performance Metrics',
-              style: Theme.of(context).textTheme.titleLarge,
+              'Performance Overview',
+              style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             GridView.count(
@@ -28,129 +39,77 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: 2,
               childAspectRatio: 1.2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              children: [
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              children: const [
                 StatCard(
-                  title: 'Completion Rate',
+                  title: 'Success Rate',
                   value: '85%',
-                  icon: Icons.check_circle,
+                  icon: Icons.track_changes_rounded,
                   backgroundColor: Colors.teal,
                 ),
                 StatCard(
-                  title: 'Avg Assessment Score',
+                  title: 'Engagemnt',
                   value: '4.2/5',
-                  icon: Icons.grade,
+                  icon: Icons.auto_awesome_rounded,
                   backgroundColor: Colors.indigo,
                 ),
                 StatCard(
-                  title: 'Learning Hours',
+                  title: 'Course Time',
                   value: '156h',
-                  icon: Icons.schedule,
+                  icon: Icons.timer_rounded,
                   backgroundColor: Colors.amber,
                 ),
                 StatCard(
                   title: 'Skill Level',
-                  value: 'Advanced',
-                  icon: Icons.auto_awesome,
+                  value: 'Expert',
+                  icon: Icons.workspace_premium_rounded,
                   backgroundColor: Colors.pink,
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
 
-            // Skill DNA Section
+            // --- Skill DNA / Radial-like Progress Section ---
             Text(
-              'Skill DNA Profile',
-              style: Theme.of(context).textTheme.titleLarge,
+              'Skill DNA Breakdown',
+              style: theme.textTheme.titleLarge,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(
-                    color:
-                        Theme.of(context).dividerColor.withValues(alpha: 0.1)),
-              ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSkillTile('Flutter Development', 92),
-                    const SizedBox(height: 16),
-                    _buildSkillTile('Data Analysis', 78),
-                    const SizedBox(height: 16),
-                    _buildSkillTile('Cloud Architecture', 85),
-                    const SizedBox(height: 16),
-                    _buildSkillTile('Team Leadership', 88),
+                    _buildSkillProgress(
+                        theme, 'Mobile Development', 0.92, Colors.blue),
+                    const SizedBox(height: 20),
+                    _buildSkillProgress(
+                        theme, 'UI/UX Design', 0.78, Colors.purple),
+                    const SizedBox(height: 20),
+                    _buildSkillProgress(
+                        theme, 'Backend Logics', 0.85, Colors.orange),
+                    const SizedBox(height: 20),
+                    _buildSkillProgress(
+                        theme, 'Agile Methodology', 0.88, Colors.green),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
 
-            // Insights Section
+            // --- AI Insights Summary ---
             Text(
-              'Personalized Insights',
-              style: Theme.of(context).textTheme.titleLarge,
+              'AI recommendations',
+              style: theme.textTheme.titleLarge,
             ),
-            const SizedBox(height: 12),
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(
-                    color:
-                        Theme.of(context).dividerColor.withValues(alpha: 0.1)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.lightbulb_rounded,
-                            color: Colors.blue,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Career Growth Opportunity',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Your Cloud Architecture skills are ready for senior roles',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(color: Colors.grey[600]),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            const SizedBox(height: 16),
+            _buildInsightCard(
+              theme,
+              'Career Path Trend',
+              'You are trending towards a Senior Flutter Architect role. Focus on System Design next.',
+              Icons.trending_up_rounded,
+              AppTheme.primaryColor,
             ),
           ],
         ),
@@ -158,36 +117,68 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildSkillTile(String skillName, double proficiency) {
+  /// Helper to build a skill progress bar with label and percentage.
+  Widget _buildSkillProgress(
+      ThemeData theme, String label, double value, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              skillName,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            Text(
-              '${proficiency.toInt()}%',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+            Text(label,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            Text('${(value * 100).toInt()}%',
+                style: TextStyle(color: color, fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 8),
         ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(10),
           child: LinearProgressIndicator(
-            minHeight: 8,
-            value: proficiency / 100,
-            backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation<Color>(
-              proficiency >= 85 ? Colors.green : Colors.orange,
-            ),
+            value: value,
+            minHeight: 10,
+            backgroundColor: color.withValues(alpha: 0.1),
+            valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ),
       ],
+    );
+  }
+
+  /// Builds a descriptive insight card.
+  Widget _buildInsightCard(
+      ThemeData theme, String title, String desc, IconData icon, Color color) {
+    return Card(
+      color: color.withValues(alpha: 0.05),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12)),
+              child: Icon(icon, color: color),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(desc,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
